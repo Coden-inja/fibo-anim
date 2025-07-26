@@ -2,6 +2,9 @@
 
 Moot Spiral is a C program that renders a selection of square images as an infinite Fibonacci spiral. Originally intended to create a hypnotic animation that showcases the profile pictures of Twitter mutuals. It uses the Raylib graphics library.
 
+## Preview
+https://github.com/user-attachments/assets/aceced9f-c9aa-48db-a9ff-17507ddc064b
+
 ## Requirements
 
 - C compiler such as GCC
