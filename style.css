@@ -863,3 +863,270 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: rgba(0, 0, 0, 0.2);
   border-top: 1px solid var(--border-glass);
 }
+
+/* ========================================================
+   Mobile & Tablet Responsiveness (< 768px and < 480px)
+   ======================================================== */
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 8px 12px 24px;
+    gap: 12px;
+  }
+
+  /* Compact Header */
+  .app-header {
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+  }
+
+  .brand-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .brand-title {
+    font-size: 1.05rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.7rem;
+  }
+
+  .btn-github {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+
+  .btn-github svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Layout */
+  .app-main {
+    gap: 14px;
+  }
+
+  .canvas-wrapper {
+    border-radius: var(--radius-md);
+  }
+
+  .canvas-hud {
+    padding: 8px 10px;
+  }
+
+  .live-badge {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+
+  .hud-stats {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+
+  .hud-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    gap: 4px;
+  }
+
+  .hud-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Natural page scrolling for controls on mobile */
+  .controls-aside {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+    gap: 12px;
+  }
+
+  .control-card {
+    padding: 12px;
+    border-radius: var(--radius-md);
+    gap: 10px;
+  }
+
+  .card-title {
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+
+  .card-title svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .badge {
+    font-size: 0.68rem;
+    padding: 3px 8px;
+  }
+
+  /* Callout Banner */
+  .export-callout-banner {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .callout-icon {
+    font-size: 1.05rem;
+  }
+
+  .callout-text strong {
+    font-size: 0.78rem;
+  }
+
+  .callout-text span {
+    font-size: 0.66rem;
+  }
+
+  .btn-jump-export {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  /* Dropzone */
+  .dropzone {
+    padding: 14px 10px;
+  }
+
+  .drop-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+  }
+
+  .drop-main {
+    font-size: 0.82rem;
+  }
+
+  .drop-sub {
+    font-size: 0.68rem;
+  }
+
+  .thumbnails-container {
+    max-height: 80px;
+    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  }
+
+  .btn-subtle {
+    font-size: 0.7rem;
+  }
+
+  /* Controls & Sliders */
+  .slider-header, .group-label {
+    font-size: 0.78rem;
+  }
+
+  .slider-val {
+    font-size: 0.78rem;
+  }
+
+  .seg-btn {
+    padding: 6px 4px;
+    font-size: 0.72rem;
+  }
+
+  .pill-btn {
+    padding: 6px;
+    font-size: 0.72rem;
+  }
+
+  .color-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  .btn-audio-preview {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+
+  .hint-text {
+    font-size: 0.68rem;
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    padding: 12px;
+  }
+
+  .modal-card {
+    border-radius: var(--radius-md);
+  }
+
+  .modal-header {
+    padding: 12px 14px;
+  }
+
+  .modal-title {
+    font-size: 0.95rem;
+  }
+
+  .modal-body {
+    padding: 14px;
+    gap: 8px;
+  }
+
+  .modal-footer {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-container {
+    padding: 6px 8px 20px;
+  }
+
+  .brand-subtitle {
+    display: none; /* Hide subtitle on tiny screens to keep header ultra clean */
+  }
+
+  .brand-title {
+    font-size: 0.95rem;
+  }
+
+  .btn-github span {
+    display: none; /* Show only icon on small mobile screens */
+  }
+
+  .btn-github {
+    padding: 6px 8px;
+  }
+
+  .duration-pills {
+    grid-template-columns: repeat(2, 1fr); /* 2x2 grid for pills */
+  }
+
+  .hud-stats {
+    font-size: 0.65rem;
+  }
+
+  #lbl-reverse-mode {
+    display: none; /* Icon only for reverse toggle button on small phones */
+  }
+}
+
