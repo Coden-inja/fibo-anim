@@ -25,7 +25,7 @@ const DEFAULT_SAMPLES = [
 const state = {
   textures: [],
   isPlaying: true,
-  reverseMode: false,
+  motionMode: 'forward', // 'forward', 'reverse', or 'bounce'
   zoomSpeed: BASE_ZOOM_SPEED,
   zoom: DEFAULT_ZOOM_START,
   bgColor: '#f5f5f5',
@@ -215,23 +215,26 @@ function tick(now) {
 
     let curSpeed = state.zoomSpeed;
 
-    if (state.reverseMode) {
-      // Periodic 60s cycle easing
-      const cycleTime = animationTime % 60;
-      if (cycleTime < 25.0) {
+    if (state.motionMode === 'reverse') {
+      // Instant pure reverse zoom out
+      curSpeed = 2.0 - state.zoomSpeed; // e.g. 2 - 1.02 = 0.98
+    } else if (state.motionMode === 'bounce') {
+      // Smooth 12-second in-and-out cycle
+      const cycleTime = animationTime % 12.0;
+      if (cycleTime < 5.0) {
         curSpeed = state.zoomSpeed;
-      } else if (cycleTime < 30.0) {
-        const t = (cycleTime - 25.0) / 5.0;
+      } else if (cycleTime < 6.0) {
+        const t = (cycleTime - 5.0);
         curSpeed = state.zoomSpeed - (state.zoomSpeed - 1.0) * t;
-      } else if (cycleTime < 35.0) {
-        const t = (cycleTime - 30.0) / 5.0;
-        curSpeed = 1.0 - (1.0 - (2 - state.zoomSpeed)) * t;
-      } else if (cycleTime < 55.0) {
-        curSpeed = 2 - state.zoomSpeed;
+      } else if (cycleTime < 11.0) {
+        curSpeed = 2.0 - state.zoomSpeed;
       } else {
-        const t = (cycleTime - 55.0) / 5.0;
-        curSpeed = (2 - state.zoomSpeed) + ((state.zoomSpeed - (2 - state.zoomSpeed)) * t);
+        const t = (cycleTime - 11.0);
+        curSpeed = (2.0 - state.zoomSpeed) + (state.zoomSpeed - (2.0 - state.zoomSpeed)) * t;
       }
+    } else {
+      // Standard forward zoom in
+      curSpeed = state.zoomSpeed;
     }
 
     if (curSpeed >= 1.0) {
@@ -520,16 +523,40 @@ btnPlayPause.addEventListener('click', () => {
   iconPause.style.display = state.isPlaying ? 'block' : 'none';
 });
 
-function setReverseMode(enabled) {
-  state.reverseMode = enabled;
-  lblReverseMode.textContent = enabled ? 'Reverse Mode' : 'Normal Zoom';
-  btnModeContinuous.classList.toggle('active', !enabled);
-  btnModeReverse.classList.toggle('active', enabled);
+const btnModeForward = document.getElementById('btn-mode-forward');
+const btnModeReverse = document.getElementById('btn-mode-reverse');
+const btnModeBounce = document.getElementById('btn-mode-bounce');
+
+function setMotionMode(mode) {
+  state.motionMode = mode;
+  animationTime = 0; // Reset animation timer for clean transition
+
+  if (mode === 'forward') {
+    lblReverseMode.textContent = 'Zoom In';
+  } else if (mode === 'reverse') {
+    lblReverseMode.textContent = 'Zoom Out';
+  } else {
+    lblReverseMode.textContent = 'In & Out';
+  }
+
+  const allBtns = [btnModeForward, btnModeReverse, btnModeBounce];
+  allBtns.forEach(btn => {
+    if (btn) btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
 }
 
-btnReverseToggle.addEventListener('click', () => setReverseMode(!state.reverseMode));
-btnModeContinuous.addEventListener('click', () => setReverseMode(false));
-btnModeReverse.addEventListener('click', () => setReverseMode(true));
+// In HUD: toggle flips immediately between forward (zoom in) and reverse (zoom out)
+btnReverseToggle.addEventListener('click', () => {
+  if (state.motionMode === 'forward') {
+    setMotionMode('reverse');
+  } else {
+    setMotionMode('forward');
+  }
+});
+
+if (btnModeForward) btnModeForward.addEventListener('click', () => setMotionMode('forward'));
+if (btnModeReverse) btnModeReverse.addEventListener('click', () => setMotionMode('reverse'));
+if (btnModeBounce) btnModeBounce.addEventListener('click', () => setMotionMode('bounce'));
 
 zoomSpeedSlider.addEventListener('input', e => {
   state.zoomSpeed = parseFloat(e.target.value);
