@@ -6,9 +6,9 @@
 *.mov
 *.MOV
 temp_*
-preview*
 
-# Local Backups
+# Private & User Event Photos
+hult_photos/
 moots_backup/
 
 # Python artifacts
