@@ -1,6 +1,6 @@
 # Moot Spiral (Hult Animation)
 
-Moot Spiral turns a collection of images into a hypnotic, infinite Fibonacci spiral animation. Originally conceived by **[5bitcube](https://github.com/5bitcube)** as an interactive desktop experiment in C, this repository evolves the project into a complete **Python MP4 video production engine** featuring background music synchronization, automatic square-cropping, dynamic reverse-zoom motion, and broadcast-ready 60 FPS video export.
+Moot Spiral turns a collection of images into a hypnotic, infinite Fibonacci spiral animation. Inspired by **[5bitcube](https://github.com/5bitcube)**'s original interactive desktop experiment, this repository elevates the concept into a complete **Python-powered HD video production engine** featuring background music synchronization, smart auto-cropping, dynamic reverse-zoom motion, and broadcast-ready 60 FPS video export.
 
 ## Preview
 
@@ -8,48 +8,40 @@ Moot Spiral turns a collection of images into a hypnotic, infinite Fibonacci spi
 
 ---
 
-## 📖 Background: Why & How We Modified It
+## 🌟 Evolution & Enhancements
 
-### The Limitations of the Original C Implementation
-The upstream [moot-spiral](https://github.com/5bitcube/moot-spiral) project by 5bitcube is written in C using the Raylib graphics library. While visually captivating, it was designed strictly as an interactive desktop window and posed several challenges:
-1. **No Video Export**: You could only watch it live on screen; producing a shareable video required third-party screen-recording tools (OBS/Game Bar) that suffered from frame stutters, resolution mismatches, and UI clutter.
-2. **No Audio Integration**: There was no way to attach music tracks or sync transitions with audio beats.
-3. **Strict 1:1 Image Requirement**: Photos had to be pre-cropped manually; rectangular camera photos would appear distorted or stretched.
-4. **Heavy Compiler Toolchain**: Running it required installing MinGW-w64 GCC and linking Raylib C libraries on Windows, leading to setup friction.
+Building upon the elegant Fibonacci geometry of the original project, this version expands the creative possibilities to make creating and sharing videos effortless:
 
-### 🚀 What Was Built in This Version
-We preserved the mathematical elegance of the original Fibonacci geometry and ported it into a standalone **Python video rendering engine**:
-
-- **Offline Deterministic Rendering**: Calculates every frame mathematically offline and encodes directly to H.264 at a rock-solid 60 FPS with zero dropped frames.
-- **Audio Muxing & Fading**: Automatically detects your audio track (`.m4a`, `.mp3`, `.wav`), trims to custom start offsets (e.g., jumping straight to the beat drop), and applies smooth audio fade-outs.
-- **Dynamic Reverse Motion**: Introduces an easing sequence that zooms inward, decelerates to a complete standstill, and accelerates in reverse (zoom-out).
-- **Intelligent Auto-Crop**: Seamlessly handles arbitrary high-resolution camera pictures (e.g. 24MP 6000×4000 camera JPEGs) by automatically detecting EXIF orientation, center-cropping to a 1:1 square, and resizing with Lanczos antialiasing.
-- **Zero C Compiler Dependencies**: Fully native Python + OpenCV + FFmpeg workflow that installs in seconds via `pip`.
+- **Direct MP4 Video Export**: Renders frame-by-frame offline into a smooth, broadcast-quality 60 FPS H.264 video file ready for sharing on social media or messaging platforms.
+- **Soundtrack Integration**: Automatically detects background music tracks (`.m4a`, `.mp3`, `.wav`), synchronizes video duration to the music, supports custom audio start offsets (e.g., dropping right on the beat), and applies smooth audio fade-outs.
+- **Hypnotic Stop & Reverse Motion**: Introduces a dynamic easing motion that zooms inward, gently decelerates to a standstill, and accelerates in reverse (zoom-out).
+- **Intelligent Auto-Crop**: Effortlessly handles high-resolution camera photos (portrait, landscape, or square) by auto-detecting orientation and center-cropping them with high-quality Lanczos antialiasing.
+- **Lightweight, Pure-Python Setup**: Runs anywhere Python is installed with standard open-source tools (`opencv`, `imageio-ffmpeg`, `pillow`), requiring no complex compiler setups.
 
 ---
 
 ## 🛠️ Quick Start
 
 ### 1. Installation
-Make sure you have Python 3.8+ installed, then install the dependencies:
+Ensure Python 3.8+ is installed, then install the dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Prepare Photos & Music
-- **Photos**: Drop your photos (`.jpg`, `.png`, `.webp`) into the `moots/` directory. They can be any orientation or resolution—the engine will auto-orient and center-crop them to squares.
+### 2. Add Photos & Music
+- **Photos**: Drop your photos (`.jpg`, `.png`, `.webp`) into the `moots/` directory. Any orientation or resolution is supported—the engine will auto-orient and square-crop them.
 - **Music (Optional)**: Place your audio file (`.m4a`, `.mp3`, `.wav`) directly in the project root directory.
 
-### 3. Generate Video
+### 3. Generate Your Video
 
 ```bash
 # Standard 60-second video with continuous zoom
 python export_spiral_video.py
 
-# 60-second video with the stop-and-reverse animation starting at 32s in audio
+# 60-second video with stop-and-reverse motion starting at 32s in audio
 python export_spiral_video.py --start 32 --duration 60 --reverse
 
-# Full song duration starting at custom offset
+# Render to match the full song length
 python export_spiral_video.py --start 32
 
 # 1080p Full HD render
@@ -61,7 +53,7 @@ python export_spiral_video.py --width 1920 --height 1080 --duration 60 --reverse
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `--start` | `float` | `32.0` | Audio start offset in seconds |
-| `--duration` | `float` | `60.0` | Output video length in seconds (defaults to full remaining track if omitted) |
+| `--duration` | `float` | `60.0` | Video length in seconds (defaults to remaining audio duration) |
 | `--reverse` | `flag` | `False` | Enables hypnotic stop-and-reverse animation sequence |
 | `--width` | `int` | `1280` | Video frame width in pixels |
 | `--height` | `int` | `720` | Video frame height in pixels |
