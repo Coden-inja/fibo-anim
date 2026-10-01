@@ -20,13 +20,28 @@ Building upon the elegant Fibonacci geometry of the original project, this versi
 
 ---
 
-## 🛠️ Quick Start
+## 🌐 Web Studio (In-Browser Generator)
 
-### 1. Installation
-Ensure Python 3.8+ is installed, then install the dependencies:
+You can run Moot Spiral directly in your browser with zero installation:
+- **Live 60 FPS Canvas**: Watch the Fibonacci spiral render in real-time.
+- **Drag & Drop Upload**: Add any photos—they are automatically center-cropped to squares.
+- **Audio Sync & Live Preview**: Upload your music track, adjust the start offset slider, and listen in sync.
+- **Client-Side Video Export**: Record and download your HD video right inside the browser!
+
+### Running Locally:
+Simply open `index.html` in your browser, or start a local server:
 ```bash
-pip install -r requirements.txt
+python -m http.server 8080
 ```
+Then visit: `http://localhost:8080`
+
+### 🚀 1-Click Deployment (100% Free):
+- **GitHub Pages**: Go to **Settings** → **Pages** → Source: **Deploy from a branch** (`main` / `/root`) → Click **Save**.
+- **Vercel**: Import the repository on [vercel.com](https://vercel.com) and click **Deploy** (no build settings required).
+
+---
+
+## 🛠️ Python CLI Exporter
 
 ### 2. Add Photos & Music
 - **Photos**: Drop your photos (`.jpg`, `.png`, `.webp`) into the `moots/` directory. Any orientation or resolution is supported—the engine will auto-orient and square-crop them.
