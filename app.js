@@ -220,18 +220,23 @@ function stepAnimation(dt) {
     // Instant pure reverse zoom out
     curSpeed = 2.0 - state.zoomSpeed; // e.g. 2 - 1.02 = 0.98
   } else if (state.motionMode === 'bounce') {
-    // Smooth 12-second in-and-out cycle
-    const cycleTime = animationTime % 12.0;
-    if (cycleTime < 5.0) {
-      curSpeed = state.zoomSpeed;
-    } else if (cycleTime < 6.0) {
-      const t = (cycleTime - 5.0);
-      curSpeed = state.zoomSpeed - (state.zoomSpeed - 1.0) * t;
-    } else if (cycleTime < 11.0) {
-      curSpeed = 2.0 - state.zoomSpeed;
+    // Switch exactly 1 time in the video around the 60% mark
+    const duration = Math.max(5.0, state.exportDuration || 60.0);
+    const switchTime = duration * 0.60;
+    const transHalf = Math.min(0.8, Math.max(0.3, duration * 0.02)); // smooth 0.6-1.6s turnaround window
+    const tMod = animationTime % duration;
+
+    if (tMod < (switchTime - transHalf)) {
+      curSpeed = state.zoomSpeed; // Zoom In for the first 60% of the video
+    } else if (tMod > (switchTime + transHalf)) {
+      curSpeed = 2.0 - state.zoomSpeed; // Zoom Out for the remaining 40% of the video
     } else {
-      const t = (cycleTime - 11.0);
-      curSpeed = (2.0 - state.zoomSpeed) + (state.zoomSpeed - (2.0 - state.zoomSpeed)) * t;
+      // Smooth cosine ease turnaround at the peak
+      const prog = (tMod - (switchTime - transHalf)) / (transHalf * 2.0);
+      const ease = (1.0 - Math.cos(prog * Math.PI)) / 2.0;
+      const forwardSpeed = state.zoomSpeed;
+      const reverseSpeed = 2.0 - state.zoomSpeed;
+      curSpeed = forwardSpeed - (forwardSpeed - reverseSpeed) * ease;
     }
   } else {
     // Standard forward zoom in
