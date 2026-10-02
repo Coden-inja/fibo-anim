@@ -20,6 +20,21 @@ All image processing, audio synchronization, and video recording happen **entire
 
 ---
 
+## 🛠️ Tech Stack
+
+### Web Studio (In-Browser)
+- **Core & Rendering**: Vanilla JavaScript (ES6+), HTML5 Canvas 2D API (60 FPS mathematical spiral geometry)
+- **Audio Engine**: Web Audio API (`AudioContext`, `decodeAudioData`, beat-offset synchronization)
+- **Video Recording**: `MediaRecorder` API + `canvas.captureStream(60)` (100% client-side HD MP4/WebM export)
+- **UI & Design**: Pure Vanilla CSS with Glassmorphism, CSS Custom Properties, and mobile-first responsive layout (zero frameworks)
+
+### Python CLI (Headless Engine)
+- **Python 3**: Scriptable CLI for offline batch rendering
+- **OpenCV & NumPy**: Matrix manipulation, orientation auto-detection, and smart square-cropping
+- **FFmpeg (`imageio-ffmpeg`)**: Audio-video muxing and smooth volume fade-out filters
+
+---
+
 ## 🚀 Live Demo & Quick Start
 
 🌐 **Try the Web Studio live**: **[fibo-anim.vercel.app](https://fibo-anim.vercel.app/)**
