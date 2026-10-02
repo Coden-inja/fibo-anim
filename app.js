@@ -103,8 +103,9 @@ const btnRemoveAudio = document.getElementById('btn-remove-audio');
 
 const zoomSpeedSlider = document.getElementById('zoom-speed-slider');
 const valZoomSpeed = document.getElementById('val-zoom-speed');
-const btnModeContinuous = document.getElementById('btn-mode-continuous');
+const btnModeForward = document.getElementById('btn-mode-forward');
 const btnModeReverse = document.getElementById('btn-mode-reverse');
+const btnModeBounce = document.getElementById('btn-mode-bounce');
 
 const colorBtns = document.querySelectorAll('.color-btn');
 const pillBtns = document.querySelectorAll('.pill-btn');
@@ -282,6 +283,34 @@ function createCroppedSquareCanvas(img) {
   return offCanvas;
 }
 
+function createFallbackAvatar(index) {
+  const c = document.createElement('canvas');
+  c.width = 400;
+  c.height = 400;
+  const cx = c.getContext('2d');
+  const hues = [190, 260, 330, 45, 160, 220, 280];
+  const hue = hues[index % hues.length];
+
+  const grad = cx.createLinearGradient(0, 0, 400, 400);
+  grad.addColorStop(0, `hsl(${hue}, 85%, 60%)`);
+  grad.addColorStop(1, `hsl(${(hue + 45) % 360}, 90%, 40%)`);
+  cx.fillStyle = grad;
+  cx.fillRect(0, 0, 400, 400);
+
+  cx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+  cx.beginPath();
+  cx.arc(200, 200, 110, 0, Math.PI * 2);
+  cx.fill();
+
+  cx.fillStyle = '#fff';
+  cx.font = 'bold 90px Outfit, sans-serif';
+  cx.textAlign = 'center';
+  cx.textBaseline = 'middle';
+  cx.fillText(`#${index + 1}`, 200, 200);
+
+  return c;
+}
+
 async function loadSampleAvatars() {
   state.textures = [];
   thumbnailsContainer.innerHTML = '';
@@ -290,7 +319,6 @@ async function loadSampleAvatars() {
     DEFAULT_SAMPLES.map(src => {
       return new Promise(resolve => {
         const img = new Image();
-        img.crossOrigin = 'anonymous';
         img.onload = () => resolve(createCroppedSquareCanvas(img));
         img.onerror = () => resolve(null);
         img.src = src;
@@ -298,7 +326,15 @@ async function loadSampleAvatars() {
     })
   );
 
-  state.textures = loaded.filter(Boolean);
+  let valid = loaded.filter(Boolean);
+  if (valid.length === 0) {
+    // If local files are not accessible, generate 7 colorful fallback avatars
+    for (let i = 0; i < 7; i++) {
+      valid.push(createFallbackAvatar(i));
+    }
+  }
+
+  state.textures = valid;
   updateTextureCountUI();
 }
 
@@ -312,7 +348,14 @@ function updateTextureCountUI() {
     const thumb = document.createElement('div');
     thumb.className = 'thumb-item';
     const img = document.createElement('img');
-    img.src = c.toDataURL('image/jpeg', 0.6);
+    try {
+      img.src = c.toDataURL('image/jpeg', 0.6);
+    } catch (e) {
+      // Fallback if canvas is tainted in certain file:// environments
+      if (c instanceof HTMLCanvasElement) {
+        thumb.style.background = '#222';
+      }
+    }
     thumb.appendChild(img);
     thumbnailsContainer.appendChild(thumb);
   });
@@ -522,10 +565,6 @@ btnPlayPause.addEventListener('click', () => {
   iconPlay.style.display = state.isPlaying ? 'none' : 'block';
   iconPause.style.display = state.isPlaying ? 'block' : 'none';
 });
-
-const btnModeForward = document.getElementById('btn-mode-forward');
-const btnModeReverse = document.getElementById('btn-mode-reverse');
-const btnModeBounce = document.getElementById('btn-mode-bounce');
 
 function setMotionMode(mode) {
   state.motionMode = mode;
