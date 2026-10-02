@@ -822,25 +822,34 @@ btnModalClose.addEventListener('click', () => {
 // Initialize on Load
 loadSampleAvatars();
 
-// Privacy Badge Tap handler for phones / touch devices
+// Privacy Badge Tap / Click handler for phones and desktop
 const privacyBadge = document.getElementById('btn-privacy-badge');
 let popoverDismissTimer = null;
 
 if (privacyBadge) {
+  const popover = document.getElementById('privacy-popover');
+  if (popover) {
+    popover.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
+
   privacyBadge.addEventListener('click', (e) => {
+    if (popover && popover.contains(e.target)) return;
     e.stopPropagation();
     const isActive = privacyBadge.classList.toggle('active');
     if (popoverDismissTimer) clearTimeout(popoverDismissTimer);
     if (isActive) {
       popoverDismissTimer = setTimeout(() => {
         privacyBadge.classList.remove('active');
-      }, 3500);
+      }, 5000);
     }
   });
 
   document.addEventListener('click', (e) => {
     if (!privacyBadge.contains(e.target)) {
       privacyBadge.classList.remove('active');
+      if (popoverDismissTimer) clearTimeout(popoverDismissTimer);
     }
   });
 }
