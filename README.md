@@ -1,115 +1,70 @@
-# Moot Spiral Studio (Hult Animation)
+# Moot Spiral Studio
 
-Moot Spiral turns a collection of images into a hypnotic, infinite Fibonacci spiral animation. Inspired by **[5bitcube](https://github.com/5bitcube)**'s original interactive desktop experiment, this repository elevates the concept into a complete **In-Browser Web Studio & Python HD Video Engine** featuring real-time 60 FPS preview, drag-and-drop uploads, background music synchronization, smart auto-cropping, dynamic reverse-zoom motion, and instant video export.
-
-## Preview
+Turn your photos and music into a hypnotic, infinite Fibonacci spiral animation. Download HD 60 FPS videos directly from your browser or via the Python CLI.
 
 ![Moot Spiral Preview](assets/preview.gif)
 
 ---
 
-## 🌟 Evolution & Enhancements
-
-Building upon the elegant Fibonacci geometry of the original project, this version expands the creative possibilities to make creating and sharing videos effortless:
-
-- **🌐 In-Browser Web Studio**: Real-time 60 FPS HTML5 Canvas viewer that lets anyone drag & drop photos, sync songs, and export HD videos right inside their browser—no installation required.
-- **Direct MP4 Video Export**: Renders frame-by-frame into a smooth, broadcast-quality 60 FPS H.264 video file ready for sharing on social media or messaging platforms.
-- **Soundtrack Integration**: Automatically detects background music tracks (`.m4a`, `.mp3`, `.wav`), synchronizes video duration to the music, supports custom audio start offsets (e.g., dropping right on the beat), and applies smooth audio fade-outs.
-- **Hypnotic Stop & Reverse Motion**: Introduces a dynamic easing motion that zooms inward, gently decelerates to a standstill, and accelerates in reverse (zoom-out).
-- **Intelligent Auto-Crop**: Effortlessly handles high-resolution camera photos (portrait, landscape, or square) by auto-detecting orientation and center-cropping them with high-quality Lanczos antialiasing.
-- **Zero Heavy Toolchains**: Runs either 100% client-side in the browser or via a lightweight, single-command Python script.
+## 🔒 100% Local & Private
+All image processing, audio synchronization, and video recording happen **entirely on your device**. No photos, tracks, or data are ever uploaded to any server.
 
 ---
 
-## 🌐 Web Studio (In-Browser Generator)
+## ⚡ Features
+- **🌐 In-Browser Web Studio**: Real-time 60 FPS interactive preview with zero setup.
+- **🎬 Direct HD Video Export**: Generate smooth 60 FPS MP4 / WebM videos in 720p, 1080p, or 1:1 square.
+- **🎵 Soundtrack Synchronization**: Drop in any song (`.mp3`, `.m4a`, `.wav`), pick your start offset, and sync the animation.
+- **🔄 Dynamic Motion Modes**: Continuous zoom-in, instant reverse zoom-out, or hypnotic bounce cycle.
+- **✂️ Smart Auto-Crop**: Automatically crops images of any orientation (portrait, landscape) to clean squares.
 
-Run Moot Spiral directly in any modern web browser:
-- **Live 60 FPS Canvas**: Watch the Fibonacci spiral render in real-time.
-- **Drag & Drop Upload**: Add any photos—they are automatically center-cropped to squares.
-- **Audio Sync & Live Preview**: Upload your music track, adjust the start offset slider, and listen in sync.
-- **Client-Side Video Export**: Record and download your HD video right inside the browser!
+---
 
-### Running Locally
-Simply open `index.html` in your browser, or start a local server:
+## 🚀 Live Demo & Quick Start
+
+🌐 **Try the Web Studio live**: **[fibo-anim.vercel.app](https://fibo-anim.vercel.app/)**
+
+### Option A: Run Locally (Browser)
+Simply start a local server and open the page:
 ```bash
-python -m http.server 8080
+python -m http.server 8000 --bind 127.0.0.1
 ```
-Then open: **`http://localhost:8080`**
+Open **`http://localhost:8000`** in your browser.
 
-### 🚀 1-Click Deployment (100% Free):
-- **GitHub Pages**: Go to **Settings** → **Pages** → Source: **Deploy from a branch** (`main` / `/root`) → Click **Save**.
-- **Vercel**: Import your repository on [vercel.com](https://vercel.com) and click **Deploy** (zero build configuration required).
+> You can also deploy to **GitHub Pages** or **Vercel** with one click (static HTML/CSS/JS with zero build steps).
 
 ---
 
-## 🛠️ Python CLI Exporter
-
+### Option B: Python CLI Generator
 For batch rendering or command-line scripting:
 
-### 1. Installation
-Ensure Python 3.8+ is installed, then install dependencies:
 ```bash
+# 1. Install dependencies
 pip install -r requirements.txt
-```
 
-### 2. Add Photos & Music
-- **Photos**: Drop your photos (`.jpg`, `.png`, `.webp`) into the `moots/` directory. Any orientation or resolution is supported—the engine will auto-orient and square-crop them.
-- **Music (Optional)**: Place your audio file (`.m4a`, `.mp3`, `.wav`) directly in the project root directory.
+# 2. Add photos to moots/ folder (and optional audio in root)
 
-### 3. Generate Video
-
-```bash
-# Standard 60-second video with continuous zoom
+# 3. Render video
 python export_spiral_video.py
 
-# 60-second video with stop-and-reverse motion starting at 32s in audio
+# 60s render starting at 32s into audio with reverse motion
 python export_spiral_video.py --start 32 --duration 60 --reverse
-
-# Render to match the full song length
-python export_spiral_video.py --start 32
-
-# 1080p Full HD render
-python export_spiral_video.py --width 1920 --height 1080 --duration 60 --reverse
 ```
 
-### CLI Reference
-
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `--start` | `float` | `32.0` | Audio start offset in seconds |
-| `--duration` | `float` | `60.0` | Video length in seconds (defaults to remaining audio duration) |
-| `--reverse` | `flag` | `False` | Enables hypnotic stop-and-reverse animation sequence |
-| `--width` | `int` | `1280` | Video frame width in pixels |
-| `--height` | `int` | `720` | Video frame height in pixels |
+#### CLI Options
+| Flag | Default | Description |
+| :--- | :--- | :--- |
+| `--start` | `32.0` | Audio start time in seconds |
+| `--duration` | `60.0` | Video length in seconds |
+| `--reverse` | `False` | Enables stop-and-reverse animation |
+| `--width` | `1280` | Video width |
+| `--height` | `720` | Video height |
 
 ---
 
-## 📁 Project Structure
-
-```
-├── assets/
-│   └── preview.gif            # Lightweight animated preview for documentation
-├── moots/                     # Source images directory (default sample avatars included)
-├── index.html                 # Web Studio user interface
-├── style.css                  # Modern glassmorphism design system
-├── app.js                     # In-browser Fibonacci engine & video recorder
-├── export_spiral_video.py     # Python offline HD video export engine
-├── requirements.txt           # Python package dependencies
-├── .gitignore                 # Excludes heavy MP4/audio media & private photos
-├── LICENSE                    # The Unlicense (Public Domain)
-└── README.md                  # Project documentation
-```
-
----
-
-## 💡 Credits & Acknowledgments
-
-- **Original Creator & Concept**: Created by **[5bitcube](https://github.com/5bitcube)** ([5bitcube/moot-spiral](https://github.com/5bitcube/moot-spiral)).
-- **Sample Avatars**: The default avatar files in `moots/` are sourced from the original upstream repository.
-- **Web Studio & Python Video Engine**: Extended and maintained by [Coden-inja](https://github.com/Coden-inja).
-
----
+## 💡 Credits
+- **Original Concept**: [5bitcube/moot-spiral](https://github.com/5bitcube/moot-spiral)
+- **Web Studio & Video Engine**: [Coden-inja](https://github.com/Coden-inja)
 
 ## 📄 License
-
-This project is released into the public domain under [The Unlicense](LICENSE).
+Released into the public domain under [The Unlicense](LICENSE).

@@ -53,8 +53,11 @@ body {
 /* Header */
 .app-header {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap;
+  gap: 16px;
   padding: 12px 20px;
   background: var(--bg-card);
   backdrop-filter: blur(16px);
@@ -66,6 +69,7 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .brand-icon {
@@ -78,6 +82,7 @@ body {
   border-radius: var(--radius-md);
   color: #fff;
   box-shadow: var(--accent-glow);
+  flex-shrink: 0;
 }
 
 .brand-title {
@@ -87,15 +92,27 @@ body {
   background: linear-gradient(135deg, #ffffff 40%, #94a3b8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
 .brand-subtitle {
   font-size: 0.8rem;
   color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .btn-github {
   display: inline-flex;
+  flex-direction: row;
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
@@ -107,12 +124,124 @@ body {
   font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .btn-github:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: var(--accent-cyan);
   transform: translateY(-1px);
+}
+
+/* 100% Local Privacy Badge */
+.privacy-badge {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(139, 92, 246, 0.06) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.28);
+  border-radius: var(--radius-full);
+  color: #f1f5f9;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.privacy-badge:hover,
+.privacy-badge.active {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.18) 0%, rgba(139, 92, 246, 0.12) 100%);
+  border-color: rgba(6, 182, 212, 0.55);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.privacy-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulsePrivacy 2.2s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+@keyframes pulsePrivacy {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 6px #10b981;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.75;
+    box-shadow: 0 0 12px #10b981;
+  }
+}
+
+.privacy-eye-icon {
+  color: var(--accent-cyan);
+  flex-shrink: 0;
+}
+
+.privacy-text {
+  color: #f8fafc;
+  white-space: nowrap;
+}
+
+/* Tooltip Popover (Desktop Hover + Mobile Tap) */
+.privacy-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 270px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(6, 182, 212, 0.15);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--text-main);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1000;
+  white-space: normal;
+  text-align: left;
+}
+
+.privacy-popover::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: 28px;
+  width: 10px;
+  height: 10px;
+  background: rgba(15, 23, 42, 0.96);
+  border-left: 1px solid rgba(6, 182, 212, 0.35);
+  border-top: 1px solid rgba(6, 182, 212, 0.35);
+  transform: rotate(45deg);
+}
+
+/* Shown on Desktop Hover or Mobile Active Tap */
+.privacy-badge:hover .privacy-popover,
+.privacy-badge.active .privacy-popover {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* Main Workspace */
@@ -1128,5 +1257,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
   #lbl-reverse-mode {
     display: none; /* Icon only for reverse toggle button on small phones */
   }
+
+  .privacy-badge {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  .privacy-text {
+    display: none; /* Show icon and live pulse dot on ultra-small screens */
+  }
 }
+
 

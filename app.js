@@ -818,3 +818,28 @@ btnModalClose.addEventListener('click', () => {
 
 // Initialize on Load
 loadSampleAvatars();
+
+// Privacy Badge Tap handler for phones / touch devices
+const privacyBadge = document.getElementById('btn-privacy-badge');
+let popoverDismissTimer = null;
+
+if (privacyBadge) {
+  privacyBadge.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isActive = privacyBadge.classList.toggle('active');
+    if (popoverDismissTimer) clearTimeout(popoverDismissTimer);
+    if (isActive) {
+      popoverDismissTimer = setTimeout(() => {
+        privacyBadge.classList.remove('active');
+      }, 3500);
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!privacyBadge.contains(e.target)) {
+      privacyBadge.classList.remove('active');
+    }
+  });
+}
+
+
