@@ -77,7 +77,8 @@ python export_spiral_video.py --start 32 --duration 60 --reverse
 
 ---
 
-## 💡 Credits
+## 💡 Credits & Repository
+- **Repository**: [github.com/Coden-inja/fibo-anim](https://github.com/Coden-inja/fibo-anim)
 - **Original Concept**: [5bitcube/moot-spiral](https://github.com/5bitcube/moot-spiral)
 - **Web Studio & Video Engine**: [Coden-inja](https://github.com/Coden-inja)
 
