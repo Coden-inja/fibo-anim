@@ -206,58 +206,64 @@ function drawSquares(w, h) {
 // Animation Loop
 let lastTime = performance.now();
 let animationTime = 0;
+let lastRenderTime = performance.now();
+
+function stepAnimation(dt) {
+  lastRenderTime = performance.now();
+  animationTime += dt;
+  const w = canvas.width;
+  const h = canvas.height;
+
+  let curSpeed = state.zoomSpeed;
+
+  if (state.motionMode === 'reverse') {
+    // Instant pure reverse zoom out
+    curSpeed = 2.0 - state.zoomSpeed; // e.g. 2 - 1.02 = 0.98
+  } else if (state.motionMode === 'bounce') {
+    // Smooth 12-second in-and-out cycle
+    const cycleTime = animationTime % 12.0;
+    if (cycleTime < 5.0) {
+      curSpeed = state.zoomSpeed;
+    } else if (cycleTime < 6.0) {
+      const t = (cycleTime - 5.0);
+      curSpeed = state.zoomSpeed - (state.zoomSpeed - 1.0) * t;
+    } else if (cycleTime < 11.0) {
+      curSpeed = 2.0 - state.zoomSpeed;
+    } else {
+      const t = (cycleTime - 11.0);
+      curSpeed = (2.0 - state.zoomSpeed) + (state.zoomSpeed - (2.0 - state.zoomSpeed)) * t;
+    }
+  } else {
+    // Standard forward zoom in
+    curSpeed = state.zoomSpeed;
+  }
+
+  if (curSpeed >= 1.0) {
+    if (state.zoom >= DEFAULT_ZOOM_MAX) {
+      state.zoom = DEFAULT_ZOOM_START;
+      shiftSquares(4);
+    }
+  } else {
+    if (state.zoom <= DEFAULT_ZOOM_START) {
+      state.zoom = DEFAULT_ZOOM_MAX;
+      shiftSquares(-4);
+    }
+  }
+
+  state.zoom *= Math.pow(curSpeed, dt * 60.0);
+
+  updateSizes(state.zoom);
+  positionSpiral();
+  centerSpiral(w, h);
+  drawSquares(w, h);
+}
 
 function tick(now) {
   const dt = Math.min((now - lastTime) / 1000, 0.1);
   lastTime = now;
 
   if (state.isPlaying || state.isRecording) {
-    animationTime += dt;
-    const w = canvas.width;
-    const h = canvas.height;
-
-    let curSpeed = state.zoomSpeed;
-
-    if (state.motionMode === 'reverse') {
-      // Instant pure reverse zoom out
-      curSpeed = 2.0 - state.zoomSpeed; // e.g. 2 - 1.02 = 0.98
-    } else if (state.motionMode === 'bounce') {
-      // Smooth 12-second in-and-out cycle
-      const cycleTime = animationTime % 12.0;
-      if (cycleTime < 5.0) {
-        curSpeed = state.zoomSpeed;
-      } else if (cycleTime < 6.0) {
-        const t = (cycleTime - 5.0);
-        curSpeed = state.zoomSpeed - (state.zoomSpeed - 1.0) * t;
-      } else if (cycleTime < 11.0) {
-        curSpeed = 2.0 - state.zoomSpeed;
-      } else {
-        const t = (cycleTime - 11.0);
-        curSpeed = (2.0 - state.zoomSpeed) + (state.zoomSpeed - (2.0 - state.zoomSpeed)) * t;
-      }
-    } else {
-      // Standard forward zoom in
-      curSpeed = state.zoomSpeed;
-    }
-
-    if (curSpeed >= 1.0) {
-      if (state.zoom >= DEFAULT_ZOOM_MAX) {
-        state.zoom = DEFAULT_ZOOM_START;
-        shiftSquares(4);
-      }
-    } else {
-      if (state.zoom <= DEFAULT_ZOOM_START) {
-        state.zoom = DEFAULT_ZOOM_MAX;
-        shiftSquares(-4);
-      }
-    }
-
-    state.zoom *= Math.pow(curSpeed, dt * 60.0);
-
-    updateSizes(state.zoom);
-    positionSpiral();
-    centerSpiral(w, h);
-    drawSquares(w, h);
+    stepAnimation(dt);
   }
 
   requestAnimationFrame(tick);
@@ -695,9 +701,13 @@ btnExportVideo.addEventListener('click', async () => {
   startVideoRecording();
 });
 
+let recordingWakeLock = null;
+
 function getSupportedMimeType() {
   const types = [
-    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=avc1.4d002a,mp4a.40.2', // Main Profile Level 4.2 (supports 1080p60)
+    'video/mp4;codecs=avc1.64002a,mp4a.40.2', // High Profile Level 4.2
+    'video/mp4;codecs=avc1,mp4a.40.2',
     'video/mp4',
     'video/webm;codecs=vp9,opus',
     'video/webm;codecs=vp8,opus',
@@ -717,6 +727,15 @@ async function startVideoRecording() {
     await state.audioContext.resume();
   }
 
+  // Request screen wake lock so screen doesn't dim or sleep during 60s recording
+  try {
+    if ('wakeLock' in navigator) {
+      recordingWakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (e) {
+    // Wake Lock not supported or permission denied
+  }
+
   state.isRecording = true;
   state.recordedChunks = [];
   animationTime = 0;
@@ -724,9 +743,12 @@ async function startVideoRecording() {
 
   // Video track from canvas at 60 FPS
   const videoStream = canvas.captureStream(60);
+  const recordingVideoTrack = videoStream.getVideoTracks()[0];
   const combinedStream = new MediaStream();
 
-  videoStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
+  if (recordingVideoTrack) {
+    combinedStream.addTrack(recordingVideoTrack);
+  }
 
   // Audio track from Web Audio destination node if available
   if (state.audioBuffer) {
@@ -737,7 +759,8 @@ async function startVideoRecording() {
   }
 
   const mimeType = getSupportedMimeType();
-  const options = mimeType ? { mimeType, videoBitsPerSecond: 8000000 } : {};
+  const targetBitrate = state.resolution.w >= 1920 ? 6000000 : 4000000;
+  const options = mimeType ? { mimeType, videoBitsPerSecond: targetBitrate } : {};
 
   try {
     state.mediaRecorder = new MediaRecorder(combinedStream, options);
@@ -751,7 +774,19 @@ async function startVideoRecording() {
     }
   };
 
+  state.mediaRecorder.onerror = err => {
+    console.error('MediaRecorder error:', err);
+  };
+
+  const cleanupRecording = () => {
+    if (recordingWakeLock) {
+      try { recordingWakeLock.release(); } catch (e) {}
+      recordingWakeLock = null;
+    }
+  };
+
   state.mediaRecorder.onstop = () => {
+    cleanupRecording();
     stopAudioSynchronized();
     state.isRecording = false;
     recordingOverlay.style.display = 'none';
@@ -789,12 +824,25 @@ async function startVideoRecording() {
 
   state.mediaRecorder.start(250); // Capture chunks every 250ms
 
-  // Progress ticker
+  // Progress ticker & render watchdog (ensures frames never freeze if tab loses focus)
   const recordInterval = setInterval(() => {
     if (!state.isRecording) {
       clearInterval(recordInterval);
+      cleanupRecording();
       return;
     }
+
+    // Render watchdog: if requestAnimationFrame was throttled by browser power manager,
+    // manually drive canvas updates and frame capture requests
+    const timeSinceRender = performance.now() - lastRenderTime;
+    if (timeSinceRender > 30) {
+      const fallbackDt = Math.min(timeSinceRender / 1000, 0.1);
+      stepAnimation(fallbackDt);
+      if (recordingVideoTrack && typeof recordingVideoTrack.requestFrame === 'function') {
+        recordingVideoTrack.requestFrame();
+      }
+    }
+
     const elapsed = (performance.now() - state.recordingStartTime) / 1000;
     const pct = Math.min(100, (elapsed / state.exportDuration) * 100);
     recProgressFill.style.width = `${pct}%`;
@@ -806,7 +854,7 @@ async function startVideoRecording() {
         state.mediaRecorder.stop();
       }
     }
-  }, 100);
+  }, 50);
 }
 
 // Modal Listeners
