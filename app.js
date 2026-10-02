@@ -12,13 +12,15 @@ const BASE_ZOOM_SPEED = 1.02;
 
 // Default sample avatars
 const DEFAULT_SAMPLES = [
-  'moots/Astarista_.jpg',
-  'moots/an0nzymandias.jpg',
-  'moots/ankkala.jpg',
-  'moots/antlionai.jpg',
-  'moots/arthantyo.jpg',
-  'moots/astraphiliaa.jpg',
-  'moots/atkmywk.jpg'
+  'moots/angrybaby.png',
+  'moots/blinkingman.png',
+  'moots/chokingman.png',
+  'moots/confusedbaby.png',
+  'moots/dontknowgirl.png',
+  'moots/evilgirl.png',
+  'moots/iqman.png',
+  'moots/mathwoman.png',
+  'moots/smilingman.png'
 ];
 
 // App State
@@ -328,8 +330,8 @@ async function loadSampleAvatars() {
 
   let valid = loaded.filter(Boolean);
   if (valid.length === 0) {
-    // If local files are not accessible, generate 7 colorful fallback avatars
-    for (let i = 0; i < 7; i++) {
+    // If local files are not accessible, generate colorful fallback avatars
+    for (let i = 0; i < DEFAULT_SAMPLES.length; i++) {
       valid.push(createFallbackAvatar(i));
     }
   }
@@ -406,11 +408,12 @@ photoDropzone.addEventListener('drop', e => {
   }
 });
 
-btnUseSamples.addEventListener('click', () => loadSampleAvatars());
-btnClearPhotos.addEventListener('click', () => {
-  state.textures = [];
-  updateTextureCountUI();
-});
+if (btnUseSamples) {
+  btnUseSamples.addEventListener('click', () => loadSampleAvatars());
+}
+if (btnClearPhotos) {
+  btnClearPhotos.addEventListener('click', () => loadSampleAvatars());
+}
 
 // Audio Preview & Web Audio
 const btnToggleAudioPreview = document.getElementById('btn-toggle-audio-preview');

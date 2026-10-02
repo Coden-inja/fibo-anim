@@ -10,6 +10,7 @@ temp_*
 # Private & User Event Photos
 hult_photos/
 moots_backup/
+new_moots/
 
 # Python artifacts
 __pycache__/

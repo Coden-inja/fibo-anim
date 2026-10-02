@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1.3">
+  <link rel="stylesheet" href="style.css?v=1.4">
 </head>
 <body>
   <div class="app-container">
@@ -58,7 +58,7 @@
           <div class="canvas-hud top-hud">
             <span class="badge live-badge"><span class="pulse-dot"></span> 60 FPS LIVE</span>
             <div class="hud-stats">
-              <span id="stat-textures">7 Photos</span>
+              <span id="stat-textures">— Photos</span>
               <span class="hud-sep">•</span>
               <span id="stat-speed">Zoom: 1.02x</span>
             </div>
@@ -135,7 +135,7 @@
               </svg>
               Photos & Avatars
             </h2>
-            <span class="badge" id="photo-count-badge">7 Loaded</span>
+            <span class="badge" id="photo-count-badge">Loaded</span>
           </div>
 
           <!-- Upload Dropzone -->
@@ -152,8 +152,7 @@
           <div class="thumbnails-container" id="thumbnails-container"></div>
           
           <div class="card-actions">
-            <button class="btn-subtle" id="btn-use-samples">Restore Sample Avatars</button>
-            <button class="btn-subtle text-danger" id="btn-clear-photos">Clear All</button>
+            <button class="btn-subtle" id="btn-use-samples" type="button">Reset to Default Avatars</button>
           </div>
         </div>
 
